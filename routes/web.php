@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\DeliveryAddressController;
 use App\Http\Controllers;
 
 // Routes without middleware
@@ -27,7 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/order-status', fn() => view('order-status'))->name('order-status');
     Route::get('/wishlist', fn() => view('wishlist'))->name('wishlist');
     Route::get('/user-information', fn() => view('user-information'))->name('user-information');
+    Route::post('/delivery-address/save', [DeliveryAddressController::class, 'store'])->name('delivery.address.save');
     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+    Route::get('/address', [DeliveryAddressController::class, 'index'])->name('address');
 });
 
 // // Profile routes with 'auth' middleware
