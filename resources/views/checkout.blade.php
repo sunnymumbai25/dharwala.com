@@ -5,7 +5,7 @@
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb">
-                <li><a href="{{ route('home') }}">Home</a></li>
+              
                 <li><a href="category.html">Category</a></li>
                 <li class="active">Cart</li>
             </ul>

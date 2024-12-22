@@ -1,3 +1,4 @@
+<?php
 namespace App\Http\Controllers;
 
 use App\Models\Order;
@@ -17,10 +18,10 @@ class OrderController extends Controller
         $user = Auth::user();
         $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
         $cartItems = $cart->cartItems()->with('product')->get();
+        
         $totalPrice = $cartItems->sum(function ($item) {
             return $item->quantity * $item->price;
         });
-
         return view('checkout', compact('cartItems', 'totalPrice'));
     }
 

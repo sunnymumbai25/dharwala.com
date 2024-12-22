@@ -6,7 +6,7 @@ use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+
 class CartController extends Controller
 {
     /**
@@ -20,6 +20,8 @@ class CartController extends Controller
             // Convert cart items to an array for session
             $cartItems = $cart->cartItems->map(function ($item) {
                 return [
+                    'id' => $item->id, // Include the ID of the cart item
+                    'product_id' => $item->product_id,
                     'name' => $item->product->name,
                     'price' => $item->product->price,
                     'quantity' => $item->quantity,
@@ -47,161 +49,195 @@ class CartController extends Controller
 
         // $user = Auth::user();
         // $product = Product::findOrFail($productId);
-    
-        // // Get the current cart from the session, or initialize an empty array
-        // $cart = session()->get('cart', []);
-    
-        // // Check if the product is already in the cart
-        // if (isset($cart[$productId])) {
-        //     // If the product is already in the cart, update the quantity
-        //     $cart[$productId]['quantity'] += $request->input('quantity', 1);
-        // } else {
-        //     // If the product is not in the cart, add it
-        //     $cart[$productId] = [
-        //         'name' => $product->name,
-        //         'price' => $product->price,
-        //         'quantity' => $request->input('quantity', 1),
-        //         'subtotal' => $product->price * $request->input('quantity', 1),
-        //     ];
-        // }
-    
-        // // Recalculate the subtotal for all products in the cart
-        // foreach ($cart as $key => $item) {
-        //     $cart[$key]['subtotal'] = $item['price'] * $item['quantity'];
-        // }
-    
-        // // Save the updated cart to the session
-        // session()->put('cart', $cart);
-    
-        // // Redirect back to the cart page with a success message
-        // return redirect()->route('cart.index')->with('success', 'Product added to cart successfully!');
-        $user = Auth::user();
-        \Log::debug(session('cart'));  // Logs the entire cart content
+        // $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
 
-        $product = Product::findOrFail($productId);
-        Log::info('Adding product to cart:', ['user' => $user->id, 'product' => $productId]);
-        // Get the current cart from the session, or initialize an empty array
+        // $cartItem = $cart->cartItems()->where('product_id', $product->id)->first();
+
+        // if ($cartItem) {
+        //     // If the product is already in the cart, update the quantity
+        //     $cartItem->quantity += 1;
+        //     $cartItem->save();
+        // } else {
+        //     // If the product is not in the cart, add a new cart item
+        //     CartItem::create([
+        //         'cart_id' => $cart->id,
+        //         'product_id' => $product->id,
+        //         'quantity' => 1,
+        //         'price' => $product->price,
+        //     ]);
+        // }
+
+        // return redirect()->route('cart.index');
+        // $user = Auth::user();
+        // $product = Product::findOrFail($productId);
+        // $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
+        // // dd($cart);
+        // $cartItem = $cart->cartItems()->where('product_id', $product->id)->first();
+        // // dd($cartItem);
+        // if ($cartItem) {
+        //     $cartItem->quantity += 1;
+        //     $cartItem->save();
+        // } else {
+        //     CartItem::create([
+        //         'cart_id' => $cart->id,
+        //         'product_id' => $product->id,
+        //         'quantity' => 1,
+        //         'price' => $product->price, // Save the product's price at the time of adding it to the cart
+        //     ]);
+        // }
+        
         $cart = session()->get('cart', []);
-        Log::info('Cart before adding product:', $cart);
-                // Check if the product is already in the cart
-        if (isset($cart[$productId])) {
+   // Debug before updating
+
+        // return redirect()->route('cart.index');
+        $user = Auth::user();
+        $product = Product::findOrFail($productId);
+    
+        // Get or create the user's cart
+        $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
+    
+        // Check if the product is already in the cart
+        $cartItem = $cart->cartItems()->where('product_id', $product->id)->first();
+    
+        if ($cartItem) {
             // If the product is already in the cart, update the quantity
-            $cart[$productId]['quantity'] += $request->input('quantity', 1);
+            $cartItem->quantity += $request->input('quantity', 1);
+            $cartItem->save();
         } else {
             // If the product is not in the cart, add it
-            $cart[$productId] = [
-                'name' => $product->name,
-                'price' => $product->price,
+            $cart->cartItems()->create([
+                'product_id' => $product->id,
                 'quantity' => $request->input('quantity', 1),
-                'subtotal' => $product->price * $request->input('quantity', 1),
-            ];
+                'price' => $product->price,
+            ]);
         }
-    
-        // Recalculate the subtotal for all products in the cart
-        foreach ($cart as $key => $item) {
-            $cart[$key]['subtotal'] = $item['price'] * $item['quantity'];
-        }
-    
-        // Save the updated cart to the session
         session()->put('cart', $cart);
-    
-        Log::info('Product added to cart:', ['cart' => $cart]);
-    
-        // Redirect back to the cart page with a success message
+    //    echo print_r(session('cart')) ;exit;
         return redirect()->route('cart.index')->with('success', 'Product added to cart successfully!');
-    }
     
+    }
 
     /**
      * Update cart items.
      */
     public function update(Request $request)
-{
-    $user = Auth::user();
-    
-    // Get the user's cart
-    $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
-    
-    // Validate that cart_items is an array and that each quantity is an integer
-    $request->validate([
-        'cart_items' => 'required|array',
-        'cart_items.*.quantity' => 'required|integer|min:1',
-    ]);
-    
-    // Check if the request has cart_items and if they are structured as expected
-    if ($request->has('cart_items') && is_array($request->cart_items)) {
+    {
         
-        // Debugging: check the structure of cart_items
-      //  \Log::debug('Cart items from request:', $request->cart_items);
-        
+        $user = Auth::user();
+        $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
+    
         foreach ($request->cart_items as $itemId => $data) {
-            // Debugging: check what itemId and data contain
-           // \Log::debug("Item ID: $itemId", $data);
-            
-            // Fetch the cart item by its ID (make sure it's the correct ID)
-            $cartItem = $cart->cartItems()->find($itemId);
-            
+            // Log the incoming data for debugging
+            \Log::debug('Updating cart item with ID:', [$itemId, $data]);
+    
+            // Try to find the cart item by its ID
+            $cartItem = $cart->cartItems()->where('id', $itemId)->first();
+    
             if ($cartItem) {
-                // Update the cart item quantity
-                $cartItem->quantity = $data['quantity'];
+                $cartItem->quantity = $data['quantity'];  // Update quantity
                 $cartItem->save();
+                \Log::info('Cart item updated:', [$cartItem]);
             } else {
-           //     \Log::warning("Cart item not found for ID: $itemId");
+                \Log::error('Cart item not found with ID: ' . $itemId);
             }
         }
+        return redirect()->route('cart.index');
+    
+
+        $user = Auth::user();
+        $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
+    dd($request->cart_items);
+        // Validate that cart_items is an array and that each quantity is an integer
+        $request->validate([
+            'cart_items' => 'required|array',
+            'cart_items.*.quantity' => 'required|integer|min:1',
+        ]);
+      
+        // Loop through cart items and update their quantities
+        foreach ($request->cart_items as $itemId => $data) {
+            $cartItem = $cart->cartItems()->find($itemId);
+            if ($cartItem) {
+                // Update the quantity
+                $cartItem->quantity = $data['quantity'];
+                $cartItem->save();
+            }
+        }
+    
+        // Update session cart after modifying the database
+        $this->updateCartSession();
+    
+        // Redirect back to the cart index
+        return redirect()->route('cart.index')->with('success', 'Cart updated successfully.');
     }
-
-    // Update the session cart after the database cart is modified
-    $this->updateCartSession();
-
-    // Return with success message
-    return redirect()->route('cart.index')->with('success', 'Cart updated successfully.');
-}
-
+    
+    private function updateCartSession()
+    {
+        // Ensure the session is up-to-date after cart modification
+        $cart = auth()->user()->cart()->with('cartItems.product')->first();
+        if ($cart) {
+            $cartItems = $cart->cartItems->map(function ($item) {
+                return [
+                    'id' => $item->product->id,
+                    'name' => $item->product->name,
+                    'price' => $item->product->price,
+                    'quantity' => $item->quantity,
+                    'subtotal' => $item->quantity * $item->product->price,
+                ];
+            })->toArray();
+    
+            session(['cart' => $cartItems]);
+        } else {
+            session()->forget('cart');
+        }
+    }
     
     
+    
+    // /**
+    //  * Remove an item from the cart.
+    //  */
+    // public function remove($id)
+    // {
+    //     $user = Auth::user();
+    //     $cart = $user->cart()->first();
+    //     // \Log::debug("Cart Items: ", $cart->cartItems->toArray());
+    //     $user = Auth::user();
+    //     $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
+    
+    //     $cartItem = $cart->cartItems()->where('id', $id)->first();
+    
+    //     if (!$cartItem) {
+    //         return redirect()->route('cart.index')->withErrors('Cart item not found.');
+    //     }
+    
+    //     $cartItem->delete();
+    
+    //     return redirect()->route('cart.index')->with('success', 'Item removed successfully');
+    
+    // }
 
     /**
-     * Remove an item from the cart.
-     */
-    public function remove($id)
+ * Remove an item from the cart.
+ */
+public function remove($id)
 {
     $user = Auth::user();
     $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
-    $cartItem = $cart->cartItems()->findOrFail($id);
+
+    // Find the cart item to remove
+    $cartItem = $cart->cartItems()->where('id', $id)->first();
+
+    if (!$cartItem) {
+        // Return error response if item not found
+        return response()->json(['success' => false, 'message' => 'Cart item not found.'], 404);
+    }
+
+    // Delete the cart item
     $cartItem->delete();
 
-    // Update the session after removing the cart item
-    $this->updateCartSession();
-
-    return redirect()->route('cart.index')->with('success', 'Product removed from cart!');
+    // Return success response
+    return response()->json(['success' => true, 'message' => 'Item removed successfully.']);
 }
 
-private function updateCartSession()
-{
-    $cart = Cart::with('cartItems.product')->where('user_id', auth()->id())->first();
-
-    if ($cart) {
-        // Transform cart items into an array for session
-        $cartItems = $cart->cartItems->map(function ($item) {
-            return [
-                'id' => $item->id,  // Use cart item ID here
-                'product_id' => $item->product->id,
-                'name' => $item->product->name,
-                'price' => $item->product->price,
-                'quantity' => $item->quantity,
-                'subtotal' => $item->quantity * $item->product->price,
-            ];
-        })->toArray();
-
-        // Store the structured cart items array in the session
-        session(['cart' => $cartItems]);
-    } else {
-        // Clear the session if no cart exists
-        session()->forget('cart');
-    }
-}
-
-
-
+    
 }

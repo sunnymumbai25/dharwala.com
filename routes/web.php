@@ -10,25 +10,25 @@ use App\Http\Controllers;
 
 // Routes without middleware
 // Route::get('/', fn() => view('index'))->name('home');
-// Route::get('/product-details', fn() => view('details'))->name('product-details');
+Route::get('/product-details', fn() => view('details'))->name('product-details');
 
 // // Routes with 'auth' and 'verified' middleware
-// Route::middleware(['auth', 'verified'])->group(function () {
-//     Route::get('/cart', fn() => view('cart'))->name('cart');
-//     Route::get('/account', fn() => view('account'))->name('account');
-//     Route::get('/add-address', fn() => view('add-address'))->name('add-address');
-//     Route::get('/checkout-1', fn() => view('checkout-a'))->name('checkout-1');
-//     Route::get('/checkout-2', fn() => view('checkout-b'))->name('checkout-2');
-//     Route::get('/checkout-3', fn() => view('checkout-c'))->name('checkout-3');
-//     Route::get('/checkout-4', fn() => view('checkout-d'))->name('checkout-4');
-//     Route::get('/checkout-5', fn() => view('checkout-e'))->name('checkout-5');
-//     Route::get('/my-address', fn() => view('my-address'))->name('my-address');
-//     Route::get('/order-list', fn() => view('order-list'))->name('order-list');
-//     Route::get('/order-status', fn() => view('order-status'))->name('order-status');
-//     Route::get('/wishlist', fn() => view('wishlist'))->name('wishlist');
-//     Route::get('/user-information', fn() => view('user-information'))->name('user-information');
-//     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
-// });
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Route::get('/cart', fn() => view('cart'))->name('cart');
+    // Route::get('/account', fn() => view('account'))->name('account');
+    Route::get('/add-address', fn() => view('add-address'))->name('add-address');
+    Route::get('/checkout-1', fn() => view('checkout-a'))->name('checkout-1');
+    Route::get('/checkout-2', fn() => view('checkout-b'))->name('checkout-2');
+    Route::get('/checkout-3', fn() => view('checkout-c'))->name('checkout-3');
+    Route::get('/checkout-4', fn() => view('checkout-d'))->name('checkout-4');
+    Route::get('/checkout-5', fn() => view('checkout-e'))->name('checkout-5');
+    Route::get('/my-address', fn() => view('my-address'))->name('my-address');
+    Route::get('/order-list', fn() => view('order-list'))->name('order-list');
+    Route::get('/order-status', fn() => view('order-status'))->name('order-status');
+    Route::get('/wishlist', fn() => view('wishlist'))->name('wishlist');
+    Route::get('/user-information', fn() => view('user-information'))->name('user-information');
+    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
+});
 
 // // Profile routes with 'auth' middleware
 // Route::middleware('auth')->group(function () {
@@ -40,6 +40,8 @@ use App\Http\Controllers;
 // Product Routes
 
 Route::middleware('auth')->group(function () {
+    // Route::get('/home', fn() => view('dashboard'))->name('dashboard');
+
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index'); // View cart
@@ -48,9 +50,9 @@ Route::middleware('auth')->group(function () {
     // Route::post('/cart/{id}/add', [CartController::class, 'add'])->name('cart.add'); // Add product to cart
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update'); // Update cart quantities
     
-    Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+    // Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
-
+    Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
     // Wishlist Routes
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index'); // View wishlist
     Route::post('/wishlist/{id}/add', [WishlistController::class, 'add'])->name('wishlist.add'); // Add product to wishlist

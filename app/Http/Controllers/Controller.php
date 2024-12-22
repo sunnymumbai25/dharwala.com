@@ -7,11 +7,13 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+
 abstract class Controller
 {
   // Show the cart with items
   public function index()
   {
+ 
       $user = auth()->user();
       $cart = $user->cart;
       $cartItems = $cart->cartItems;
