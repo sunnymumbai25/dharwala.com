@@ -7,6 +7,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DeliveryAddressController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers;
 
 // Routes without middleware
@@ -31,6 +32,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/delivery-address/save', [DeliveryAddressController::class, 'store'])->name('delivery.address.save');
     Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
     Route::get('/address', [DeliveryAddressController::class, 'index'])->name('address');
+    Route::post('/checkout/process', [CheckoutController::class, 'checkoutProcess'])->name('checkout.process');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/order/success', [OrderController::class, 'success'])->name('order.success');
+    Route::get('/checkout', [DeliveryAddressController::class, 'index'])->name('address');
+
 });
 
 // // Profile routes with 'auth' middleware
@@ -66,6 +72,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout'); // View checkout page
     Route::post('/order/place', [OrderController::class, 'placeOrder'])->name('order.place'); // Place an order
     Route::get('/order/confirmation/{orderId}', [OrderController::class, 'confirmation'])->name('order.confirmation'); // Order confirmation
+    // Route::get('/checkout', [DeliveryAddressController::class, 'index'])->name('address');
+
 });
 
 require __DIR__.'/auth.php';

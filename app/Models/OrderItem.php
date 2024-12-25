@@ -12,8 +12,10 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_id',
-        'quantity',
+        'name',
         'price',
+        'quantity',
+        'subtotal',
     ];
 
     /**
@@ -30,5 +32,24 @@ class OrderItem extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+     /**
+     * Calculate the subtotal for the order item.
+     *
+     * @return float
+     */
+    public function calculateSubtotal()
+    {
+        return $this->quantity * $this->price;
+    }
+
+    /**
+     * Set the subtotal attribute automatically when saving.
+     */
+    protected static function booted()
+    {
+        static::saving(function ($orderItem) {
+            $orderItem->subtotal = $orderItem->calculateSubtotal();
+        });
     }
 }

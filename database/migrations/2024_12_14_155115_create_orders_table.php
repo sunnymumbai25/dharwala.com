@@ -23,8 +23,8 @@ return new class extends Migration
             $table->decimal('total_price', 10, 2);
             $table->text('shipping_address');
             $table->text('billing_address');
+            $table->string('payment_method');
             $table->timestamps();
-
             // Foreign keys
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
  
