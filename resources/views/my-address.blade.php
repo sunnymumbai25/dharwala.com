@@ -23,7 +23,36 @@
                     <p> Be sure to update your personal information if it has changed.</p>
                 </div>
                 <div class="w100 clearfix">
+                    @foreach($addresses as $key=> $address)
                     <div class="col-xs-12 col-sm-6 col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><strong>My Address {{  ++$key; }}</strong></h3>
+                            </div>
+                            <div class="panel-body">
+                                <ul>
+                                    <li><span class="address-name"> <strong>{{ $address->name }}</strong></span></li>
+                                    <li><span class="address-company">{{ $address->address_line_1 }} </span></li>
+                                    <li>
+                                        <span class="address-line1"> 
+                                            @if($address->address_line_2)
+                                                {{ $address->address_line_2 }}<br>
+                                            @endif
+                                        </span>
+                                    </li>
+                                    <li><span class="address-line2"> {{ $address->city }}, {{ $address->state }},{{ $address->postal_code }}, {{ $address->country }} </span></li>
+                                    <li><span> <strong>Mobile</strong> : {{ $address->phone }} </span></li>
+                                    <li><span> <strong>Phone</strong> : 020904 - 85882 </span></li>
+                                </ul>
+
+                            </div>
+                            <div class="panel-footer panel-footer-address"><a href="{{ route('add-address') }}"
+                                    class="btn btn-sm btn-success"> <i class="fa fa-edit"> </i> Edit </a> <a
+                                    class="btn btn-sm btn-danger"> <i class="fa fa-minus-circle"></i> Delete </a></div>
+                        </div>
+                    </div>
+                    @endforeach
+                    <!-- <div class="col-xs-12 col-sm-6 col-md-4">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h3 class="panel-title"><strong>My Address</strong></h3>
@@ -82,7 +111,7 @@
                                     class="btn btn-sm btn-success"> <i class="fa fa-edit"> </i> Edit </a> <a
                                     class="btn btn-sm btn-danger"> <i class="fa fa-minus-circle"></i> Delete </a></div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="col-lg-12 clearfix">

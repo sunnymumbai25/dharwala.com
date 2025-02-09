@@ -19,8 +19,16 @@ class DeliveryAddressController extends Controller
 
         return view('address', compact('addresses'));
     }
+
+    public function my_address()
+    {
+        $addresses = auth()->user()->deliveryAddresses;
+
+        return view('my-address', compact('addresses'));
+    }
     public function store(Request $request)
     {
+        // dd($_POST);
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address_line_1' => 'required|string|max:255',

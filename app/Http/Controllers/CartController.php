@@ -14,6 +14,7 @@ class CartController extends Controller
      */
     public function index()
     {
+      
         $cart = Cart::with('cartItems.product')->where('user_id', auth()->id())->first();
 
         if ($cart) {
@@ -47,6 +48,7 @@ class CartController extends Controller
     public function addProductToCart(Request $request, $productId)
     {
 
+        // dd($request);
         // $user = Auth::user();
         // $product = Product::findOrFail($productId);
         // $cart = $user->cart()->firstOrCreate(['user_id' => $user->id]);
@@ -87,7 +89,7 @@ class CartController extends Controller
         // }
         
         $cart = session()->get('cart', []);
-   // Debug before updating
+        // Debug before updating
 
         // return redirect()->route('cart.index');
         $user = Auth::user();
@@ -112,7 +114,7 @@ class CartController extends Controller
             ]);
         }
         session()->put('cart', $cart);
-    //    echo print_r(session('cart')) ;exit;
+        //echo print_r(session('cart'));exit;
         return redirect()->route('cart.index')->with('success', 'Product added to cart successfully!');
     
     }

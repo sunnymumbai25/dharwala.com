@@ -11,20 +11,24 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers;
 
 // Routes without middleware
-// Route::get('/', fn() => view('index'))->name('home');
+Route::get('/', fn() => view('index'))->name('home');
+Route::get('/', fn() => view('index'))->name('home');
+
 Route::get('/product-details', fn() => view('details'))->name('product-details');
 
 // // Routes with 'auth' and 'verified' middleware
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('/cart', fn() => view('cart'))->name('cart');
-    // Route::get('/account', fn() => view('account'))->name('account');
+    Route::get('/cart', fn() => view('cart'))->name('cart');
+    Route::get('/account', fn() => view('account'))->name('account');
     Route::get('/add-address', fn() => view('add-address'))->name('add-address');
     Route::get('/checkout-1', fn() => view('checkout-a'))->name('checkout-1');
     Route::get('/checkout-2', fn() => view('checkout-b'))->name('checkout-2');
     Route::get('/checkout-3', fn() => view('checkout-c'))->name('checkout-3');
     Route::get('/checkout-4', fn() => view('checkout-d'))->name('checkout-4');
     Route::get('/checkout-5', fn() => view('checkout-e'))->name('checkout-5');
-    Route::get('/my-address', fn() => view('my-address'))->name('my-address');
+    // Route::get('/my-address', fn() => view('my-address'))->name('my-address');
+    Route::get('/my-address', [DeliveryAddressController::class, 'my_address'])->name('my-address');
+
     Route::get('/order-list', fn() => view('order-list'))->name('order-list');
     Route::get('/order-status', fn() => view('order-status'))->name('order-status');
     Route::get('/wishlist', fn() => view('wishlist'))->name('wishlist');
@@ -49,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Product Routes
 
 Route::middleware('auth')->group(function () {
-    // Route::get('/home', fn() => view('dashboard'))->name('dashboard');
+    Route::get('/home', fn() => view('dashboard'))->name('dashboard');
 
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -13,9 +14,11 @@ class ProductController extends Controller
      */
     public function show($id)
     {
+        $you_may_also_like = DB::table('products')->inRandomOrder()->limit(10)->get();
+
         $product = Product::findOrFail($id);
 
-        return view('show', compact('product'));
+        return view('show', compact('product','you_may_also_like'));
     }
 
 
