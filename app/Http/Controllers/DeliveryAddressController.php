@@ -16,7 +16,7 @@ class DeliveryAddressController extends Controller
     public function index()
     {
         $addresses = auth()->user()->deliveryAddresses;
-
+        
         return view('address', compact('addresses'));
     }
 

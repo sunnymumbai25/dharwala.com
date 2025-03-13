@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reko Store</title>
+  <title>Dharwala.com</title>
   <!-- <link href="assets/css/bootstrap.min.css" rel="stylesheet">
 <link id="pagestyle" rel="stylesheet" type="text/css" href="assets/css/skin-1.css">
 <link href="assets/plugins/swiper-master/css/swiper.min.css" rel="stylesheet">

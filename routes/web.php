@@ -49,20 +49,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
-
 // Product Routes
-
 Route::middleware('auth')->group(function () {
     Route::get('/home', fn() => view('dashboard'))->name('dashboard');
-
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
-
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index'); // View cart
     Route::post('/cart/{id}/add', [CartController::class, 'addProductToCart'])->name('cart.add');
-
     // Route::post('/cart/{id}/add', [CartController::class, 'add'])->name('cart.add'); // Add product to cart
     Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update'); // Update cart quantities
-    
     // Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::post('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
@@ -76,8 +70,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('checkout'); // View checkout page
     Route::post('/order/place', [OrderController::class, 'placeOrder'])->name('order.place'); // Place an order
     Route::get('/order/confirmation/{orderId}', [OrderController::class, 'confirmation'])->name('order.confirmation'); // Order confirmation
+    Route::get('/order/list', [OrderController::class, 'list'])->name('order.list'); // Order confirmation
+    Route::get('/order/status/{orderId}', [OrderController::class, 'status'])->name('order.status'); // Order confirmation
     // Route::get('/checkout', [DeliveryAddressController::class, 'index'])->name('address');
-
 });
 
 require __DIR__.'/auth.php';

@@ -8,6 +8,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\User;
 use App\Models\DeliveryAddress;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -162,8 +163,41 @@ class OrderController extends Controller
     public function confirmation($orderId)
     {
         $user = Auth::user();
-        $order = $user->orders()->findOrFail($orderId);
-        return view('order_confirmation', compact('order'));
+        // $order = $user->orders()->findOrFail($orderId);
+        $order = $user->orders()->where('id', $orderId)->where('user_id', $user->id)->firstOrFail();
+        $address = DeliveryAddress::find($order->delivery_address_id);
+    
+        return view('order_confirmation', compact('order','address'));
+    }
+    /**
+     * Show the all order list.
+     */
+    public function list()
+    {
+        $user = Auth::user(); // Get authenticated user
+
+        // Retrieve orders belonging to the authenticated user
+        // $orders = Order::where('user_id', $user->id)->get();
+    
+        // // Debugging: Check what $orders contains
+        // // dd($orders); // Uncomment this if you want to debug
+    
+        // // If you want to retrieve payments for all orders
+        // $payments = Payment::whereIn('order_id', $orders->pluck('id'))->get();
+        $orders = Order::where('user_id', $user->id)->with('payment')->get(); // Load payments with orders
+        return view('order-list', compact('orders'));
+    }
+    /**
+     * Show the order status.
+     */
+    public function status($orderId)
+    {
+        $user = Auth::user();
+        //$order = $user->orders()->findOrFail($orderId);
+        $order = $user->orders()->where('id', $orderId)->where('user_id', $user->id)->firstOrFail();
+        $address = DeliveryAddress::find($order->delivery_address_id);
+        $payment = $order->payment()->firstOrFail();
+        return view('order_status', compact('order','address','payment'));
     }
     public function success()
     {

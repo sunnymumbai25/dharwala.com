@@ -495,30 +495,58 @@
     </ul>
     </ul>
     <div class="nav navbar-nav navbar-right hidden-xs">
-      <div class="dropdown  cartMenu "><a href="#" class="dropdown-toggle" data-toggle="dropdown"> <i
-            class="fa fa-shopping-cart"> </i> <span class="cartRespons"> Cart ($210.00) </span> <b class="caret">
+      <div class="dropdown  cartMenu "><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          @if(session('cart') && count(session('cart')) > 0)
+          @php $total = 0; @endphp
+                  @foreach(session('cart') as $id => $details)
+                  @php
+                  ++$id;
+                  $name = $details['name'] ?? 'Unnamed Product';
+                  $price = $details['price'] ?? 0.00;
+                  $quantity = $details['quantity'] ?? 1;
+                  $subtotal = $price * $quantity;
+                  $total += $subtotal;
+                  @endphp
+                  @endforeach
+         
+         <i class="fa fa-shopping-cart"> </i> <span class="cartRespons"> Cart (${{@$total}}) </span> <b class="caret">
           </b> </a>
+          @endif    
         <div class="dropdown-menu col-lg-4 col-xs-12 col-md-4 ">
           <div class="w100 miniCartTable scroll-pane">
             <table>
               <tbody>
+              @if(session('cart') && count(session('cart')) > 0)
+                  @php $total = 0; @endphp
+                  @foreach(session('cart') as $id => $details)
+                  @php
+                  ++$id;
+                  $name = $details['name'] ?? 'Unnamed Product';
+                  $price = $details['price'] ?? 0.00;
+                  $quantity = $details['quantity'] ?? 1;
+                  $subtotal = $price * $quantity;
+                  $total += $subtotal;
+                  @endphp
                 <tr class="miniCartProduct">
                   <td style="width:20%" class="miniCartProductThumb">
-                    <div><a href="{{ route('product-details') }}"> <img src="{{ asset('images/product/3.jpg') }}" alt="img">
-                      </a></div>
+                    <div><a href="{{ route('product-details') }}"> <img src="{{ asset('images/product/3.jpg') }}" alt="img"> </a></div>
                   </td>
                   <td style="width:40%">
                     <div class="miniCartDescription">
-                      <h4><a href="{{ route('product-details') }}"> TSHOP Tshirt DO9 </a></h4>
-                      <span class="size"> 12 x 1.5 L </span>
-                      <div class="price"><span> $22 </span></div>
+                      <h4><a href="{{ route('product-details') }}"> {{ $name }} </a></h4>
+                      <!-- <span class="size"> 12 x 1.5 L </span> -->
+                      <div class="price"><span> ${{ number_format($price, 2) }} </span></div>
                     </div>
                   </td>
-                  <td style="width:10%" class="miniCartQuantity"><a> X 1 </a></td>
-                  <td style="width:15%" class="miniCartSubtotal"><span> $33 </span></td>
-                  <td style="width:5%" class="delete"><a> x </a></td>
+                  <td style="width:10%" class="miniCartQuantity" ><a> X {{ $quantity }}</a></td>
+                  <td style="width:15%" class="miniCartSubtotal"><span>${{ $subtotal }} </span></td>
+                  <!-- <td style="width:5%" class="delete"><a> x </a></td> -->
                 </tr>
-                <tr class="miniCartProduct">
+                @endforeach
+                @else
+                <tr>Your cart is empty.</tr>
+                @endif
+                <!-- <tr class="miniCartProduct">
                   <td style="width:20%" class="miniCartProductThumb">
                     <div><a href="{{ route('product-details') }}"> <img src="{{ asset('images/product/2.jpg') }}" alt="img">
                       </a></div>
@@ -597,12 +625,15 @@
                   <td style="width:10%" class="miniCartQuantity"><a> X 1 </a></td>
                   <td style="width:15%" class="miniCartSubtotal"><span> $8.80 </span></td>
                   <td style="width:5%" class="delete"><a> x </a></td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
           <div class="miniCartFooter text-right">
-            <h3 class="text-right subtotal"> Subtotal: $210 </h3>
+          @if(session('cart') && count(session('cart')) > 0)
+
+            <h3 class="text-right subtotal"> Subtotal:  {{$total}} </h3>
+            @endif
             <a class="btn btn-sm btn-danger" href="route-cart"> <i class="fa fa-shopping-cart"> </i> VIEW
               CART </a><a class="btn btn-sm btn-primary"> CHECKOUT </a>
           </div>

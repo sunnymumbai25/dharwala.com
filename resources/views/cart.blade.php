@@ -2,7 +2,6 @@
 
 @section('content')
 <div class="container  main-container headerOffset">
-
     <div class="row">
         <div class="breadcrumbDiv col-lg-12">
             <ul class="breadcrumb">
@@ -100,9 +99,9 @@
                             </table>
                             <!-- <button type="submit" class="btn btn-primary">Update Cart</button> -->
                        
-                        <div class="mt-3">
+                        <!-- <div class="mt-3">
                             <a href="{{ route('checkout') }}" class="btn btn-success">Proceed to Checkout</a>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="cartFooter w100">
@@ -123,7 +122,7 @@
         <div class="col-lg-3 col-md-3 col-sm-5 rightSidebar">
             <div class="contentBox">
                 <div class="w100 costDetails">
-                    <div id="order-detail-content" class="table-block"><a style="margin-bottom:20px" href="checkout-0.html" title="checkout" class="btn btn-primary btn-lg btn-block "> Proceed to
+                    <div id="order-detail-content" class="table-block"><a style="margin-bottom:20px" href="{{ route('checkout') }}" title="checkout" class="btn btn-primary btn-lg btn-block "> Proceed to
                             checkout &nbsp; <i class="fa fa-arrow-right"></i> </a>
                         <div class="w100 cartMiniTable">
                             <table class="std table" id="cart-summary">
